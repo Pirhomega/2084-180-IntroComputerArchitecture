@@ -1,0 +1,85 @@
+;Corbin Matamoros
+;Program will read in two numbers at a time a six-digit pin, multiply each set together and add them. 
+;Divide that sum by 3 and compare to 26. 
+;This program, however, will use functions to read, do the multiplication, and the division.
+		.MODEL	small
+		.STACK	100h
+		.DATA
+posMES	DB		" Login successful",13,10,'$' 	;num1*num2 + num3*num4 + num5*num6 = total
+												;total/3 = average
+												;if average < 26, login successfull
+negMES	DB		" Invalid pin number",13,10,'$' ;if average > 26, failed login
+		.CODE
+rmPIN	proc	near		;create a new function/procedure		
+		mov		ah,1		;these 2 instructions 
+		int		21h			;read in a value
+		sub		al,30h		;convert to the actual number
+		mov		cl,al		;bl will store the first of each two pin numbers read in per loop
+		
+		mov 	ah,1		;read in the second pin number
+		int		21h
+		sub		al,30h
+		
+		mul		cl			;multiply the two pin numbers, al * bl = ax
+		
+		ret
+rmPIN	endp
+
+divPIN	proc	near		;create a new function/procedure
+		
+		push	ax			;these four commands save the currect values in these registers
+		push	bx			;to the stack. That way this fuction can save its values to 
+		push	cx			;them without deleting the values MAIN created!
+		push	dx			;yeet!
+		
+		mov		bp,sp		;move the base pointer to the same location as program counter
+		mov		bx,[bp+10]	;add to bp the number of bytes to reach the 3 stored at bottom of stack
+		mov		ax,[bp+12]	;add to bp the number of bytes to reach the sum value stored at bottom of stack
+		
+		div		bl			;ax/bl = al, remainder ah
+		
+		mov		[bp+12],ax	;technically stores whatever is in al into the stack 12 addresses away from BP
+		pop		dx
+		pop		cx
+		pop		bx
+		pop		ax
+		
+		ret
+divPIN	endp
+	
+Main:	mov		ax,@data
+		mov		ds,ax
+		
+		mov		bx, 0		;moves '0' to the register that will hold the total, dx
+		mov		dl, 0		;initialize the loop counter, dl
+		mov		cx, 3
+		
+LUP:	cmp		dl, 3
+		je		AVG
+		call	rmPIN		;call the function "rmPIN"
+		add		bx, ax		;add the product to the 'total' register, dx
+		add		dl, 1		;increment counter
+		jmp		LUP
+		
+AVG:	mov		ax,bx		;move the total from bx to ax for division
+		push	ax			;push sum (value of ax) to stack
+		push	cx			;push 3 to the stack
+		call	divPIN		;call function "divPIN"
+		pop		cx
+		pop		ax
+		
+		cmp		al,26		;compare average to 26
+		jge		NEGIT		;if the pin is >= 26, jump to return a negative message	
+POSIT:	lea		dx,posMES	;these print posMES to the screen
+		mov		ah,9
+		int		21h		
+		
+		jmp		done		;skips NEGIT
+		
+NEGIT:	lea		dx,negMES	;these 3 instructions print
+		mov		ah,9		;the string negMES to the
+		int		21h			;screen
+		
+done:	mov		ah,4ch
+		int		21h
+		END		Main
