@@ -32,28 +32,28 @@ read:		mov		ah,2
 			mov		ah,7			;read in a character but not display on screen
 			int		21h				;
 			
-			cmp		al,'w'			;compare al to 'W' and jump if equal
+			cmp		al,'w'			;compare al to 'w' and jump if equal
 			je		moveUp			;
 			
-			cmp		al,'s'			;compare al to 'Z' and jump if equal
+			cmp		al,'s'			;compare al to 's' and jump if equal
 			je		moveDn			;
 			
-			cmp		al,'a'			;compare al to 'A' and jump if equal
+			cmp		al,'a'			;compare al to 'a' and jump if equal
 			je		moveLft			;
 			
-			cmp		al,'d'			;compare al to 'S' and jump if equal
+			cmp		al,'d'			;compare al to 'd' and jump if equal
 			je		moveRgt			;
 			
-			cmp		al,'W'			;compare al to 'U' and jump if equal
+			cmp		al,'W'			;compare al to 'W' and jump if equal
 			je		moveUpB			;
 			
-			cmp		al,'S'			;compare al to 'N' and jump if equal
+			cmp		al,'S'			;compare al to 'S' and jump if equal
 			je		moveDnB			;
 			
-			cmp		al,'A'			;compare al to 'H' and jump if equal
+			cmp		al,'A'			;compare al to 'A' and jump if equal
 			je		moveLftB		;
 			
-			cmp		al,'D'			;compare al to 'J' and jump if equal
+			cmp		al,'D'			;compare al to 'D' and jump if equal
 			je		moveRgtB		;
 			
 			cmp		al,13			;compare al to the decimal value of the "ENTER" key and jump if equal
